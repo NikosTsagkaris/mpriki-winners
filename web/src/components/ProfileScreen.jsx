@@ -139,8 +139,8 @@ export default function ProfileScreen({ onSignOut }) {
 
           {/* Ad Banner Promo */}
           <AdBanner 
-            sponsorTitle="Ειδικές Προσφορές & Εκπτώσεις Συνεργατών!" 
-            sponsorLink="#"
+            type="adsense"
+            adClient="ca-pub-4089447801006214"
           />
 
           {/* Live Countdown Timer Card */}

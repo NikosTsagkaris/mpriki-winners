@@ -63,8 +63,8 @@ export default function LeaderboardScreen() {
 
       {/* Ad Banner Header */}
       <AdBanner 
-        sponsorTitle="Διαφημιστείτε εδώ στο Mpriki Winners!" 
-        sponsorLink="#"
+        type="adsense"
+        adClient="ca-pub-4089447801006214"
       />
 
       {loading ? (
