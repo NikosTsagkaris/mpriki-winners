@@ -134,7 +134,10 @@ fun LeaderboardScreen(
                                             )
                                         }
                                     }
-                                }
+                            }
+
+                            item {
+                                com.ntvelop.mprikiwinners.ui.components.AdMobBanner()
                             }
 
                             items(state.entries, key = { it.id }) { entry ->

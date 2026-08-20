@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { getNextDrawTimeMillis } from '../utils/monthlyDrawSchedule';
+import AdBanner from './AdBanner';
 
 export default function ProfileScreen({ onSignOut }) {
   const [profile, setProfile] = useState(null);
@@ -135,6 +136,12 @@ export default function ProfileScreen({ onSignOut }) {
               Οι επιτυχημένες συμμετοχές από τα σκαναρίσματα προστίθενται στη Μεγάλη Μηνιαία Κλήρωση!
             </p>
           </div>
+
+          {/* Ad Banner Promo */}
+          <AdBanner 
+            sponsorTitle="Ειδικές Προσφορές & Εκπτώσεις Συνεργατών!" 
+            sponsorLink="#"
+          />
 
           {/* Live Countdown Timer Card */}
           <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl text-center">

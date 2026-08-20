@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
+import AdBanner from './AdBanner';
 
 export default function LeaderboardScreen() {
   const [winners, setWinners] = useState([]);
@@ -59,6 +60,12 @@ export default function LeaderboardScreen() {
           <p className="text-xs text-slate-400">Ενημερώσεις νικητών σε πραγματικό χρόνο</p>
         </div>
       </div>
+
+      {/* Ad Banner Header */}
+      <AdBanner 
+        sponsorTitle="Διαφημιστείτε εδώ στο Mpriki Winners!" 
+        sponsorLink="#"
+      />
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
