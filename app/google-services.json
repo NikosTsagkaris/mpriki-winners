@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "500311215002",
+    "project_id": "mpriki-winners",
+    "storage_bucket": "mpriki-winners.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500311215002:android:d5c63888ef37cf4059c823",
+        "android_client_info": {
+          "package_name": "com.ntvelop.mprikiwinners"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRtsvJEDRSsV4Ze_l2EzLeyFcyQnpjxWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
