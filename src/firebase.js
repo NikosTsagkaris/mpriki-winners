@@ -21,7 +21,7 @@ export const googleProvider = new GoogleAuthProvider();
  * Calculates next 14-day draw timestamp starting from Oct 11, 2026 until Dec 25, 2026
  */
 export const getNextDrawTime = (now = Date.now()) => {
-  const startDate = new Date(2026, 9, 11, 12, 0, 0, 0).getTime();
+  const startDate = new Date(2026, 9, 25, 12, 0, 0, 0).getTime();
   const finalDate = new Date(2026, 11, 25, 20, 0, 0, 0).getTime();
   const interval = 14 * 24 * 60 * 60 * 1000;
   let current = startDate;
