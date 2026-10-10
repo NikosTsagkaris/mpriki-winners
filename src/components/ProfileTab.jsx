@@ -130,11 +130,11 @@ export default function ProfileTab({ onSignOut }) {
 
       const prizes = [
         '🕶️ 1ος Νικητής: 1 Ζευγάρι Γυαλιά Ηλίου',
-        '🕶️ 2ος Νικητής: 1 Ζευγάρι Γυαλιά Ηλίου',
-        '🎧 3ος Νικητής: HOCO BLUETOOTH W35',
-        '🔋 4ος Νικητής: ENERGENIE 20W FAST CHARGING POWERBANK 20000 mAh',
-        '🔋 5ος Νικητής: GEMBIRD SOLAR POWERBANK 10000 mAh',
-        '🔋 6ος Νικητής: POWERBANK ANKER ZOLO 10000mAh'
+        '🎧 2ος Νικητής: TWS Wireless Earbuds',
+        '🎧 3ος Νικητής: HOCO W35 Silver Bluetooth',
+        '🎧 4ος Νικητής: NOD Soundtube TWS Earphones',
+        '🎧 5ος Νικητής: NOD Soundtube TWS Earphones',
+        '🎧 6ος Νικητής: HOCO W35 MAX Blue Bluetooth'
       ];
 
       const now = Date.now();
@@ -369,7 +369,7 @@ export default function ProfileTab({ onSignOut }) {
                 {profile.totalMonthlyEntries}
               </div>
               <p className="text-xs text-slate-400">
-                Οι επιτυχημένες συμμετοχές από τα σκαναρίσματα προστίθενται στη Μεγάλη Κλήρωση (Γυαλιά Ηλίου, Hoco Bluetooth Headphones & Powerbanks)!
+                Οι επιτυχημένες συμμετοχές από τα σκαναρίσματα προστίθενται στη Μεγάλη Κλήρωση (Γυαλιά Ηλίου, TWS Earbuds & Hoco Bluetooth Headphones)!
               </p>
             </div>
 
@@ -443,22 +443,6 @@ export default function ProfileTab({ onSignOut }) {
                 </div>
 
                 {/* 2ος */}
-                <div className="p-4 bg-slate-950/90 border border-amber-500/40 rounded-2xl flex items-center justify-between shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-amber-500/30 shrink-0">
-                      🕶️
-                    </div>
-                    <div>
-                      <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider">
-                        2ος Νικητής
-                      </span>
-                      <h4 className="font-extrabold text-white text-xs mt-1">1 Ζευγάρι Γυαλιά Ηλίου</h4>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-amber-400 shrink-0 ml-2">🕶️ Γυαλιά Ηλίου</span>
-                </div>
-
-                {/* 3ος */}
                 <div className="p-4 bg-slate-950/90 border border-purple-500/40 rounded-2xl flex items-center justify-between shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-purple-500/30 shrink-0">
@@ -466,66 +450,82 @@ export default function ProfileTab({ onSignOut }) {
                     </div>
                     <div>
                       <span className="px-2 py-0.5 bg-purple-500 text-white text-[10px] font-black rounded-md uppercase tracking-wider">
-                        3ος Νικητής
+                        2ος Νικητής
                       </span>
-                      <h4 className="font-extrabold text-white text-xs mt-1">HOCO BLUETOOTH W35</h4>
+                      <h4 className="font-extrabold text-white text-xs mt-1">TWS Wireless Earbuds</h4>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-purple-400 shrink-0 ml-2">🎧 Headphones</span>
+                  <span className="text-xs font-bold text-purple-400 shrink-0 ml-2">🎧 Earbuds</span>
+                </div>
+
+                {/* 3ος */}
+                <div className="p-4 bg-slate-950/90 border border-slate-700/60 rounded-2xl flex items-center justify-between shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 bg-slate-700/30 text-slate-200 rounded-2xl flex items-center justify-center font-bold text-2xl border border-slate-700/50 shrink-0">
+                      🎧
+                    </div>
+                    <div>
+                      <span className="px-2 py-0.5 bg-slate-300 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider">
+                        3ος Νικητής
+                      </span>
+                      <h4 className="font-extrabold text-white text-xs mt-1">HOCO W35 Silver Bluetooth</h4>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-slate-300 shrink-0 ml-2">🎧 Silver Headset</span>
                 </div>
 
                 {/* 4ος */}
                 <div className="p-4 bg-slate-950/90 border border-cyan-500/40 rounded-2xl flex items-center justify-between shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 bg-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-cyan-500/30 shrink-0">
-                      🔋
+                      🎧
                     </div>
                     <div>
                       <span className="px-2 py-0.5 bg-cyan-500 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider">
                         4ος Νικητής
                       </span>
                       <h4 className="font-extrabold text-white text-xs mt-1">
-                        ENERGENIE 20W FAST CHARGING POWERBANK 20000 mAh
+                        NOD Soundtube TWS Earphones
                       </h4>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-cyan-400 shrink-0 ml-2">🔋 Powerbank 20000mAh</span>
+                  <span className="text-xs font-bold text-cyan-400 shrink-0 ml-2">🎧 Soundtube TWS</span>
                 </div>
 
                 {/* 5ος */}
                 <div className="p-4 bg-slate-950/90 border border-cyan-500/40 rounded-2xl flex items-center justify-between shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 bg-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-cyan-500/30 shrink-0">
-                      🔋
+                      🎧
                     </div>
                     <div>
                       <span className="px-2 py-0.5 bg-cyan-500 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider">
                         5ος Νικητής
                       </span>
                       <h4 className="font-extrabold text-white text-xs mt-1">
-                        GEMBIRD SOLAR POWERBANK 10000 mAh
+                        NOD Soundtube TWS Earphones
                       </h4>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-cyan-400 shrink-0 ml-2">🔋 Solar Powerbank</span>
+                  <span className="text-xs font-bold text-cyan-400 shrink-0 ml-2">🎧 Soundtube TWS</span>
                 </div>
 
                 {/* 6ος */}
-                <div className="p-4 bg-slate-950/90 border border-emerald-500/40 rounded-2xl flex items-center justify-between shadow-lg">
+                <div className="p-4 bg-slate-950/90 border border-blue-500/40 rounded-2xl flex items-center justify-between shadow-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-emerald-500/30 shrink-0">
-                      🔋
+                    <div className="w-11 h-11 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center font-bold text-2xl border border-blue-500/30 shrink-0">
+                      🎧
                     </div>
                     <div>
-                      <span className="px-2 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-black rounded-md uppercase tracking-wider">
+                      <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-black rounded-md uppercase tracking-wider">
                         6ος Νικητής
                       </span>
                       <h4 className="font-extrabold text-white text-xs mt-1">
-                        POWERBANK ANKER ZOLO 10000mAh
+                        HOCO W35 MAX Blue Bluetooth
                       </h4>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-emerald-400 shrink-0 ml-2">🔋 Powerbank Anker</span>
+                  <span className="text-xs font-bold text-blue-400 shrink-0 ml-2">🎧 Blue Headset</span>
                 </div>
               </div>
             </div>

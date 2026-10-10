@@ -143,11 +143,11 @@ export default function AdminTab() {
 
       const prizes = [
         '🕶️ 1ος Νικητής: 1 Ζευγάρι Γυαλιά Ηλίου',
-        '🕶️ 2ος Νικητής: 1 Ζευγάρι Γυαλιά Ηλίου',
-        '🎧 3ος Νικητής: HOCO BLUETOOTH W35',
-        '🔋 4ος Νικητής: ENERGENIE 20W FAST CHARGING POWERBANK 20000 mAh',
-        '🔋 5ος Νικητής: GEMBIRD SOLAR POWERBANK 10000 mAh',
-        '🔋 6ος Νικητής: POWERBANK ANKER ZOLO 10000mAh'
+        '🎧 2ος Νικητής: TWS Wireless Earbuds',
+        '🎧 3ος Νικητής: HOCO W35 Silver Bluetooth',
+        '🎧 4ος Νικητής: NOD Soundtube TWS Earphones',
+        '🎧 5ος Νικητής: NOD Soundtube TWS Earphones',
+        '🎧 6ος Νικητής: HOCO W35 MAX Blue Bluetooth'
       ];
 
       const drawn = [];
@@ -224,8 +224,46 @@ export default function AdminTab() {
       });
       await batch.commit();
 
+      // Μηδενισμός σκαναρισμένων QR tokens
+      try {
+        const qrSnapshot = await getDocs(collection(db, 'qr_tokens'));
+        if (!qrSnapshot.empty) {
+          let qrBatch = writeBatch(db);
+          let qCount = 0;
+          for (const docSnap of qrSnapshot.docs) {
+            qrBatch.delete(docSnap.ref);
+            qCount++;
+            if (qCount % 400 === 0) {
+              await qrBatch.commit();
+              qrBatch = writeBatch(db);
+            }
+          }
+          if (qCount % 400 !== 0) {
+            await qrBatch.commit();
+          }
+        }
+        setQrTokensList([]);
+      } catch (qrErr) {
+        console.error('Error clearing qr_tokens during raffle:', qrErr);
+      }
+
+      // Μηδενισμός μετρητή καφέδων POS
+      try {
+        await fetch('http://192.168.1.50:8000/orders/reset_counter', {
+          method: 'POST',
+          cache: 'no-store'
+        });
+        setPosCoffees(0);
+      } catch (posErr) {
+        console.warn('POS reset counter failed or offline:', posErr);
+        try {
+          await fetch('http://192.168.1.50:8000/orders/reset_counter', { cache: 'no-store' });
+          setPosCoffees(0);
+        } catch (e) {}
+      }
+
       setDrawResults(drawn);
-      alert('🎉 Η κλήρωση ολοκληρώθηκε επιτυχώς!');
+      alert('🎉 Η κλήρωση ολοκληρώθηκε επιτυχώς! Οι συμμετοχές, τα QR και οι καφέδες POS μηδενίστηκαν.');
     } catch (err) {
       console.error('Error running raffle:', err);
       alert('Σφάλμα κατά την εκτέλεση της κλήρωσης.');
@@ -237,7 +275,7 @@ export default function AdminTab() {
   const handleManualResetCycle = async () => {
     if (
       !window.confirm(
-        'ΠΡΟΣΟΧΗ: Θέλετε να μηδενίσετε χειροκίνητα όλες τις συμμετοχές των χρηστών για τον νέο κύκλο;'
+        'ΠΡΟΣΟΧΗ: Θέλετε να μηδενίσετε χειροκίνητα όλες τις συμμετοχές των χρηστών, τα QR και τους καφέδες POS για τον νέο κύκλο;'
       )
     ) {
       return;
@@ -254,7 +292,46 @@ export default function AdminTab() {
         });
       });
       await batch.commit();
-      alert('✅ Ο κύκλος συμμετοχών μηδενίστηκε επιτυχώς!');
+
+      // Μηδενισμός σκαναρισμένων QR tokens
+      try {
+        const qrSnapshot = await getDocs(collection(db, 'qr_tokens'));
+        if (!qrSnapshot.empty) {
+          let qrBatch = writeBatch(db);
+          let qCount = 0;
+          for (const docSnap of qrSnapshot.docs) {
+            qrBatch.delete(docSnap.ref);
+            qCount++;
+            if (qCount % 400 === 0) {
+              await qrBatch.commit();
+              qrBatch = writeBatch(db);
+            }
+          }
+          if (qCount % 400 !== 0) {
+            await qrBatch.commit();
+          }
+        }
+        setQrTokensList([]);
+      } catch (qrErr) {
+        console.error('Error clearing qr_tokens during manual reset:', qrErr);
+      }
+
+      // Μηδενισμός μετρητή καφέδων POS
+      try {
+        await fetch('http://192.168.1.50:8000/orders/reset_counter', {
+          method: 'POST',
+          cache: 'no-store'
+        });
+        setPosCoffees(0);
+      } catch (posErr) {
+        console.warn('POS reset counter failed or offline:', posErr);
+        try {
+          await fetch('http://192.168.1.50:8000/orders/reset_counter', { cache: 'no-store' });
+          setPosCoffees(0);
+        } catch (e) {}
+      }
+
+      alert('✅ Ο κύκλος συμμετοχών, τα QR και οι καφέδες POS μηδενίστηκαν επιτυχώς!');
     } catch (err) {
       console.error('Error resetting cycle:', err);
       alert('Σφάλμα κατά τον μηδενισμό.');
@@ -804,7 +881,7 @@ export default function AdminTab() {
             <div>
               <h2 className="text-2xl font-black text-white">Κλήρωση 15ημέρου (6 Νικητές)</h2>
               <p className="text-xs text-slate-400 mt-1">
-                1ος & 2ος 1 Ζευγάρι Γυαλιά Ηλίου | 3ος HOCO BLUETOOTH W35 | 4ος ENERGENIE 20000 mAh | 5ος GEMBIRD SOLAR 10000 mAh | 6ος ANKER ZOLO 10000mAh
+                1ος 1 Ζευγάρι Γυαλιά Ηλίου | 2ος TWS Wireless Earbuds | 3ος HOCO W35 Silver Bluetooth | 4ος & 5ος NOD Soundtube TWS Earphones | 6ος HOCO W35 MAX Blue Bluetooth
               </p>
             </div>
 
