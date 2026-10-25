@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { 
   doc, 
   onSnapshot, 
-  updateDoc, 
-  setDoc, 
-  collection, 
-  getDocs 
+  updateDoc 
 } from 'firebase/firestore';
 import { auth, db, getNextDrawTime } from '../firebase';
 
 export default function ProfileTab({ onSignOut }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [recentDrawWinners, setRecentDrawWinners] = useState([]);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -27,27 +23,15 @@ export default function ProfileTab({ onSignOut }) {
     const userRef = doc(db, 'users', user.uid);
     const unsubscribe = onSnapshot(
       userRef,
-      async (docSnap) => {
+      (docSnap) => {
         const nextDraw = getNextDrawTime();
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const shouldResetEntries = (data.nextDrawTimeMillis || 0) < nextDraw;
-          if (shouldResetEntries) {
-            try {
-              await updateDoc(userRef, {
-                nextDrawTimeMillis: nextDraw,
-                totalMonthlyEntries: 0
-              });
-            } catch (err) {
-              console.error('Error updating user draw period:', err);
-            }
-          }
-
           setProfile({
             uid: user.uid,
             email: user.email || '',
             displayName: data.displayName || user.displayName || user.email?.split('@')[0] || 'User',
-            totalMonthlyEntries: shouldResetEntries ? 0 : data.totalMonthlyEntries || 0,
+            totalMonthlyEntries: data.totalMonthlyEntries || 0,
             rewardPoints: data.rewardPoints || 0,
             nextDrawTimeMillis: nextDraw,
             prizeHistory: data.prizeHistory || []
@@ -84,9 +68,6 @@ export default function ProfileTab({ onSignOut }) {
 
     const updateCountdown = () => {
       const diff = Math.max(0, targetTime - Date.now());
-      if (diff <= 0 && recentDrawWinners.length === 0) {
-        handleAutoDraw();
-      }
       setTimeLeft({
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -99,114 +80,6 @@ export default function ProfileTab({ onSignOut }) {
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, [profile]);
-
-  const handleAutoDraw = async () => {
-    if (!profile) return;
-    try {
-      const usersSnap = await getDocs(collection(db, 'users'));
-      const candidateTickets = [];
-      const excludedEmails = ['nspanoudis2@gmail.com', 'johnvaltzis@gmail.com'];
-
-      usersSnap.docs.forEach((uDoc) => {
-        const uData = uDoc.data();
-        const uEmail = (uData.email || '').toLowerCase().trim();
-        const entries = uData.totalMonthlyEntries || 0;
-        if (entries > 0 && !excludedEmails.includes(uEmail)) {
-          const uName = uData.displayName || uData.email?.split('@')[0] || 'User';
-          for (let i = 0; i < entries; i++) {
-            candidateTickets.push({ uid: uDoc.id, name: uName, email: uData.email || '' });
-          }
-        }
-      });
-
-      if (candidateTickets.length === 0) {
-        console.log('No eligible candidates with entries for automatic draw.');
-        return;
-      }
-
-      const drawnList = [];
-      const pickedUids = new Set();
-      let ticketsPool = [...candidateTickets];
-
-      const prizes = [
-        '🕶️ 1ος Νικητής: 1 Ζευγάρι Γυαλιά Ηλίου',
-        '🎧 2ος Νικητής: TWS Wireless Earbuds',
-        '🎧 3ος Νικητής: HOCO W35 Silver Bluetooth',
-        '🎧 4ος Νικητής: NOD Soundtube TWS Earphones',
-        '🎧 5ος Νικητής: NOD Soundtube TWS Earphones',
-        '🎧 6ος Νικητής: HOCO W35 MAX Blue Bluetooth'
-      ];
-
-      const now = Date.now();
-      const dateFormatted = new Date(now).toLocaleDateString('el-GR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-
-      for (let rank = 0; rank < 6; rank++) {
-        const remaining = ticketsPool.filter((t) => !pickedUids.has(t.uid));
-        if (remaining.length === 0) break;
-
-        const randomIndex = Math.floor(Math.random() * remaining.length);
-        const winner = remaining[randomIndex];
-
-        pickedUids.add(winner.uid);
-        ticketsPool = ticketsPool.filter((t) => t.uid !== winner.uid);
-
-        const maskedName =
-          winner.name.length <= 3
-            ? `${winner.name[0]}***`
-            : `${winner.name[0]}***${winner.name[winner.name.length - 1]}`;
-
-        const prizeTitle = prizes[rank] || `Νικητής #${rank + 1}: Δωρεάν Καφές`;
-
-        drawnList.push({
-          name: winner.name,
-          prize: prizeTitle,
-          date: dateFormatted,
-          rank: rank + 1
-        });
-
-        await setDoc(doc(db, 'weekly_winners', `w_${now}_rank_${rank + 1}`), {
-          username: winner.name,
-          email: winner.email || '',
-          maskedUsername: maskedName,
-          prizeWon: prizeTitle,
-          rank: rank + 1,
-          timestampMillis: now,
-          drawDateFormatted: dateFormatted
-        });
-
-        try {
-          const userDocRef = doc(db, 'users', winner.uid);
-          const prizeItem = {
-            id: `auto_raffle_prize_${now}_${rank}`,
-            prizeName: prizeTitle,
-            dateWonFormatted: dateFormatted,
-            isRedeemed: false
-          };
-          await updateDoc(userDocRef, {
-            prizeHistory: [prizeItem]
-          });
-        } catch (e) {
-          console.error('Error adding prize to winner history:', e);
-        }
-      }
-
-      setRecentDrawWinners(drawnList);
-
-      const nextDrawTimestamp = getNextDrawTime(Date.now() + 1000);
-      await updateDoc(doc(db, 'users', profile.uid), {
-        nextDrawTimeMillis: nextDrawTimestamp,
-        totalMonthlyEntries: 0
-      });
-    } catch (err) {
-      console.error('Error drawing winners:', err);
-    }
-  };
 
   /**
    * Redeem 50 points for 1+1 Coffee Coupon
@@ -244,22 +117,6 @@ export default function ProfileTab({ onSignOut }) {
         await updateDoc(userRef, {
           rewardPoints: newPoints,
           prizeHistory: updatedHistory
-        });
-
-        const username = profile.displayName || profile.email?.split('@')[0] || 'User';
-        const maskedUsername =
-          username.length <= 3
-            ? `${username[0]}***`
-            : `${username[0]}***${username[username.length - 1]}`;
-
-        await setDoc(doc(db, 'weekly_winners', `coupon_${Date.now()}`), {
-          username: username,
-          email: profile.email || '',
-          maskedUsername: maskedUsername,
-          prizeWon: prizeName,
-          timestampMillis: Date.now(),
-          drawDateFormatted: dateFormatted,
-          isRedeemed: false
         });
 
         alert(
@@ -529,27 +386,6 @@ export default function ProfileTab({ onSignOut }) {
                 </div>
               </div>
             </div>
-
-            {/* Πρόσφατοι Νικητές (αν έγινε αυτόματη κλήρωση) */}
-            {recentDrawWinners.length > 0 && (
-              <div className="p-5 bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/40 rounded-3xl space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🎉</span>
-                  <h4 className="font-bold text-white text-sm">Νικητές 15νθήμερης Κλήρωσης!</h4>
-                </div>
-                <div className="space-y-2">
-                  {recentDrawWinners.map((w, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3 bg-slate-950/80 border border-amber-500/30 rounded-2xl flex items-center justify-between"
-                    >
-                      <span className="font-bold text-amber-400 text-xs">{w.name}</span>
-                      <span className="text-[11px] text-slate-300 font-medium">{w.prize}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Τα Δώρα Μου & Επιβραβεύσεις */}
             <div className="pt-4 border-t border-slate-800">

@@ -162,6 +162,16 @@ export default function AdminTab() {
         minute: '2-digit'
       });
 
+      // Καθαρισμός προηγούμενων νικητών από τη λίστα weekly_winners ώστε να εμφανίζονται μόνο οι 6 νέοι νικητές
+      try {
+        const oldWinnersSnap = await getDocs(collection(db, 'weekly_winners'));
+        for (const oldDoc of oldWinnersSnap.docs) {
+          await deleteDoc(oldDoc.ref);
+        }
+      } catch (clearErr) {
+        console.warn('Error clearing previous weekly_winners:', clearErr);
+      }
+
       for (let rank = 0; rank < 6; rank++) {
         const remaining = pool.filter((t) => !pickedUids.has(t.uid));
         if (remaining.length === 0) break;

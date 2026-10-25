@@ -175,7 +175,6 @@ export default function ScannerTab() {
 
           if (qrType === 'COFFEE' || token.toUpperCase().includes('COFFEE')) {
             const prizeName = 'Δωρεάν Καφές';
-            await recordWeeklyWinner(prizeName);
             await addPrizeToHistory(transaction, userRef, userDoc, prizeName);
             return {
               type: 'COFFEE',
@@ -205,7 +204,6 @@ export default function ScannerTab() {
 
           if (isCoffee) {
             const prizeName = 'Δωρεάν Καφές';
-            await recordWeeklyWinner(prizeName);
             await addPrizeToHistory(transaction, userRef, userDoc, prizeName);
             return {
               type: 'COFFEE',
